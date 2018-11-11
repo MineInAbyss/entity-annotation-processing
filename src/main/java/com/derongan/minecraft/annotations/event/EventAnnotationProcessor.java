@@ -63,9 +63,6 @@ public class EventAnnotationProcessor extends AbstractProcessor {
 
     private void processAnnotation(TypeElement annotation, RoundEnvironment roundEnvironment) {
         roundEnvironment.getElementsAnnotatedWith(annotation).forEach(a -> {
-
-
-
             boolean includeDeprecated = a.getAnnotation(ExpandEventHandler.class).includeDeprecated();
 
             AnnotationMirror mirror = a.getAnnotationMirrors().stream().filter(b -> b.getAnnotationType().toString().equals(ExpandEventHandler.class.getName())).findAny().get();
@@ -122,6 +119,8 @@ public class EventAnnotationProcessor extends AbstractProcessor {
 
             java.util.List<JCTree.JCMethodDecl> added = events.stream().map(b -> {
                 JCTree.JCVariableDecl variableDecl = maker.VarDef(maker.Modifiers(Flags.PARAMETER), eventName, dotNames(b.getName()), null);
+
+                variableDecl.setPos(Integer.MAX_VALUE);
 
                 final JCTree.JCMethodInvocation methoddec = maker.Apply(List.nil(), maker.Ident(toExecute.getName()), List.of(maker.Ident(eventName)));
                 JCTree.JCStatement jcStatement = maker.Exec(methoddec);
